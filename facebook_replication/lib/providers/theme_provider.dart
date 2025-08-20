@@ -14,7 +14,7 @@ class ThemeProvider extends ChangeNotifier {
   ThemeData get lightTheme {
     return ThemeData(
       brightness: Brightness.light,
-      primarySwatch: MaterialColor(0xFF1877f2, {
+      primarySwatch: const MaterialColor(0xFF1877f2, {
         50: Color(0xFFE3F2FD),
         100: Color(0xFFBBDEFB),
         200: Color(0xFF90CAF9),
@@ -30,7 +30,7 @@ class ThemeProvider extends ChangeNotifier {
       scaffoldBackgroundColor: FacebookColors.backgroundLight,
       cardColor: FacebookColors.cardLight,
       dividerColor: FacebookColors.dividerLight,
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: FacebookColors.primaryBlue,
         foregroundColor: Colors.white,
         elevation: 1,
@@ -72,18 +72,18 @@ class ThemeProvider extends ChangeNotifier {
         fillColor: FacebookColors.backgroundLight,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(25),
-          borderSide: BorderSide(color: FacebookColors.dividerLight),
+          borderSide: const BorderSide(color: FacebookColors.dividerLight),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(25),
-          borderSide: BorderSide(color: FacebookColors.dividerLight),
+          borderSide: const BorderSide(color: FacebookColors.dividerLight),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(25),
-          borderSide: BorderSide(color: FacebookColors.primaryBlue, width: 2),
+          borderSide: const BorderSide(color: FacebookColors.primaryBlue, width: 2),
         ),
       ),
-      textTheme: TextTheme(
+      textTheme: const TextTheme(
         bodyLarge: TextStyle(color: FacebookColors.textPrimaryLight),
         bodyMedium: TextStyle(color: FacebookColors.textSecondaryLight),
         bodySmall: TextStyle(color: FacebookColors.textTertiaryLight),
