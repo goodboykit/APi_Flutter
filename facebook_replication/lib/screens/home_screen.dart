@@ -8,15 +8,20 @@ import '../providers/theme_provider.dart';
 import '../constants.dart';
 import 'article_screen.dart';
 import 'settings_screen.dart';
+import '../widgets/add_dialog.dart';
 
+
+// ignore: use_key_in_widget_constructors
 class HomeScreen extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Article> articles = [];
   bool isLoading = true;
+  bool _isUpdating = false;
   String errorMessage = '';
   TextEditingController searchController = TextEditingController();
 
@@ -73,6 +78,19 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  // Add this method for handling updates
+  Future<void> _updateArticles() async {
+    setState(() {
+      _isUpdating = true;
+    });
+
+    await loadArticles(); 
+
+    setState(() {
+      _isUpdating = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -82,12 +100,12 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(6),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(6),
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: FacebookColors.primaryGradient,
               ),
-              child: Text(
+              child: const Text(
                 'f',
                 style: TextStyle(
                   color: Colors.white,
@@ -97,8 +115,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            SizedBox(width: 12),
-            Text(
+            const SizedBox(width: 12),
+            const Text(
               'Facebook',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -109,25 +127,25 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.search, size: 28),
+            icon: const Icon(Icons.search, size: 28),
             onPressed: () {
               // Focus search bar
             },
           ),
           IconButton(
-            icon: Icon(Icons.messenger_outline, size: 28),
+            icon: const Icon(Icons.messenger_outline, size: 28),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Messenger coming soon!')),
+                const SnackBar(content: Text('Messenger coming soon!')),
               );
             },
           ),
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SettingsScreen()),
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
               );
             },
           ),
@@ -137,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           // Enhancement 1: Search Bar
           Container(
-            padding: EdgeInsets.fromLTRB(16, 12, 16, 8),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             decoration: BoxDecoration(
               color: themeProvider.isDarkMode 
                   ? FacebookColors.surfaceDark 
@@ -168,14 +186,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 suffixIcon: searchController.text.isNotEmpty 
                     ? IconButton(
-                        icon: Icon(Icons.clear),
+                        icon: const Icon(Icons.clear),
                         onPressed: () {
                           searchController.clear();
                           loadArticles();
                         },
                       )
                     : null,
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
               onChanged: (value) {
                 setState(() {});
@@ -197,10 +215,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CircularProgressIndicator(
+                        const CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(FacebookColors.primaryBlue),
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         CustomText(
                           text: 'Loading articles...',
                           color: themeProvider.isDarkMode 
@@ -217,19 +235,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.error_outline,
                                 size: 64,
                                 color: FacebookColors.errorColor,
                               ),
-                              SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               CustomText(
                                 text: errorMessage,
                                 fontSize: 16,
                                 color: FacebookColors.errorColor,
                                 textAlign: TextAlign.center,
                               ),
-                              SizedBox(height: 24),
+                              const SizedBox(height: 24),
                               FacebookButton(
                                 text: 'Try Again',
                                 icon: Icons.refresh,
@@ -254,14 +272,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ? FacebookColors.textSecondaryDark 
                                         : FacebookColors.textSecondaryLight,
                                   ),
-                                  SizedBox(height: 16),
-                                  CustomText(
+                                  const SizedBox(height: 16),
+                                  const CustomText(
                                     text: 'No articles found',
                                     fontSize: 18,
                                     fontWeight: FontWeight.w500,
                                     textAlign: TextAlign.center,
                                   ),
-                                  SizedBox(height: 8),
+                                  const SizedBox(height: 8),
                                   CustomText(
                                     text: 'Pull to refresh or try searching for something else',
                                     fontSize: 14,
@@ -270,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         : FacebookColors.textSecondaryLight,
                                     textAlign: TextAlign.center,
                                   ),
-                                  SizedBox(height: 24),
+                                  const SizedBox(height: 24),
                                   FacebookButton(
                                     text: 'Refresh',
                                     icon: Icons.refresh,
@@ -281,14 +299,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           )
-                        : RefreshIndicator(
-                            onRefresh: loadArticles,
-                            child: ListView.builder(
+                        : Stack(
+                            children: [
+                              RefreshIndicator(
+                                onRefresh: _updateArticles,
+                                child: ListView.builder(
                               itemCount: articles.length,
                           itemBuilder: (context, index) {
                             final article = articles[index];
                             return Container(
-                              margin: EdgeInsets.only(bottom: 8.0),
+                              margin: const EdgeInsets.only(bottom: 8.0),
                               decoration: BoxDecoration(
                                 color: themeProvider.isDarkMode 
                                     ? FacebookColors.cardDark 
@@ -314,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   );
                                 },
                                 child: Padding(
-                                  padding: EdgeInsets.all(16.0),
+                                  padding: const EdgeInsets.all(16.0),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -325,7 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             text: article.source?['name'] ?? 'N',
                                             size: 40,
                                           ),
-                                          SizedBox(width: 12),
+                                          const SizedBox(width: 12),
                                           Expanded(
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -346,7 +366,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 12),
+                                      const SizedBox(height: 12),
                                       
                                       // Article Title
                                       CustomText(
@@ -356,7 +376,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      SizedBox(height: 8),
+                                      const SizedBox(height: 8),
                                       
                                       // Article Description
                                       if (article.description != null)
@@ -370,7 +390,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       // Article Image
                                       if (article.urlToImage != null)
                                         Container(
-                                          margin: EdgeInsets.only(top: 12),
+                                          margin: const EdgeInsets.only(top: 12),
                                           height: 200,
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(8),
@@ -383,8 +403,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       
                                       // Like and Comment Buttons
                                       Container(
-                                        margin: EdgeInsets.only(top: 12),
-                                        padding: EdgeInsets.symmetric(vertical: 8),
+                                        margin: const EdgeInsets.only(top: 12),
+                                        padding: const EdgeInsets.symmetric(vertical: 8),
                                         decoration: BoxDecoration(
                                           border: Border(
                                             top: BorderSide(
@@ -407,7 +427,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 onPressed: () {
                                                   // Handle like action
                                                   ScaffoldMessenger.of(context).showSnackBar(
-                                                    SnackBar(content: Text('Liked!')),
+                                                    const SnackBar(content: Text('Liked!')),
                                                   );
                                                 },
                                               ),
@@ -421,7 +441,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 onPressed: () {
                                                   // Handle comment action
                                                   ScaffoldMessenger.of(context).showSnackBar(
-                                                    SnackBar(content: Text('Comment feature coming soon!')),
+                                                    const SnackBar(content: Text('Comment feature coming soon!')),
                                                   );
                                                 },
                                               ),
@@ -435,7 +455,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 onPressed: () {
                                                   // Handle share action
                                                   ScaffoldMessenger.of(context).showSnackBar(
-                                                    SnackBar(content: Text('Share feature coming soon!')),
+                                                    const SnackBar(content: Text('Share feature coming soon!')),
                                                   );
                                                 },
                                               ),
@@ -451,8 +471,33 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         ),
                       ),
+                              // Loading overlay
+                              if (_isUpdating)
+                                Container(
+                                  color: Colors.black54,
+                                  child: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                            ],
+                          ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final result = await showDialog<Map<String, String>>(
+            context: context,
+            builder: (context) => AddDialog(),
+          );
+          
+          if (result != null) {
+            // Handle the new post data
+            print('New post: ${result['title']}');
+          }
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Color(0xFF1877f2),
       ),
     );
   }

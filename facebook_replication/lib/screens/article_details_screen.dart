@@ -2,38 +2,95 @@ import 'package:flutter/material.dart';
 import '../models/article_model.dart';
 import '../widgets/custom_text.dart';
 
-class ArticleDetailsScreen extends StatelessWidget {
+class ArticleDetailsScreen extends StatefulWidget {
   final Article article;
+  final bool isEditMode;
 
-  const ArticleDetailsScreen({Key? key, required this.article}) : super(key: key);
+  const ArticleDetailsScreen({
+    Key? key, 
+    required this.article,
+    this.isEditMode = false,
+  }) : super(key: key);
+
+  @override
+  _ArticleDetailsScreenState createState() => _ArticleDetailsScreenState();
+}
+
+class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
+  late bool _isEditMode;
+  late TextEditingController _titleController;
+  late TextEditingController _descriptionController;
+  
+  @override
+  void initState() {
+    super.initState();
+    _isEditMode = widget.isEditMode;
+    _titleController = TextEditingController(text: widget.article.title);
+    _descriptionController = TextEditingController(text: widget.article.description);
+  }
+
+  void _toggleEditMode() {
+    setState(() {
+      _isEditMode = !_isEditMode;
+    });
+  }
+
+  void _saveChanges() {
+    // Handle save logic
+    setState(() {
+      _isEditMode = false;
+    });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Changes saved!')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Article Details'),
-        backgroundColor: Color(0xFF1877f2),
+        title: Text(_isEditMode ? 'Edit Article' : 'Article Details'),
+        backgroundColor: const Color(0xFF1877f2),
+        actions: [
+          IconButton(
+            icon: Icon(_isEditMode ? Icons.save : Icons.edit),
+            onPressed: _isEditMode ? _saveChanges : _toggleEditMode,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Full Title
+              // Title Section
               Container(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.blue.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: CustomText(
-                  text: article.title ?? 'No Title',
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                child: _isEditMode
+                    ? TextField(
+                        controller: _titleController,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Enter title',
+                        ),
+                      )
+                    : CustomText(
+                        text: widget.article.title ?? 'No Title',
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               
               // Article Details Card
               Card(
@@ -42,7 +99,7 @@ class ArticleDetailsScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -50,44 +107,44 @@ class ArticleDetailsScreen extends StatelessWidget {
                       _buildDetailRow(
                         icon: Icons.source,
                         label: 'Source',
-                        value: article.source?['name'] ?? 'Unknown',
+                        value: widget.article.source?['name'] ?? 'Unknown',
                       ),
-                      Divider(height: 24),
+                      const Divider(height: 24),
                       
                       // Author Information
                       _buildDetailRow(
                         icon: Icons.person,
                         label: 'Author',
-                        value: article.author ?? 'Unknown Author',
+                        value: widget.article.author ?? 'Unknown Author',
                       ),
-                      Divider(height: 24),
+                      const Divider(height: 24),
                       
                       // Published Date
                       _buildDetailRow(
                         icon: Icons.calendar_today,
                         label: 'Published',
-                        value: _formatDate(article.publishedAt),
+                        value: _formatDate(widget.article.publishedAt),
                       ),
-                      Divider(height: 24),
+                      const Divider(height: 24),
                       
                       // URL
-                      if (article.url != null)
+                      if (widget.article.url != null)
                         _buildDetailRow(
                           icon: Icons.link,
                           label: 'Article URL',
-                          value: article.url!,
+                          value: widget.article.url!,
                           isLink: true,
                         ),
                     ],
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               
-              // Full Description
-              if (article.description != null)
+              // Description Section
+              if (widget.article.description != null)
                 Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade300),
                     borderRadius: BorderRadius.circular(12),
@@ -95,25 +152,34 @@ class ArticleDetailsScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CustomText(
+                      const CustomText(
                         text: 'Description',
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
-                      SizedBox(height: 8),
-                      CustomText(
-                        text: article.description!,
-                        fontSize: 16,
-                      ),
+                      const SizedBox(height: 8),
+                      _isEditMode
+                          ? TextField(
+                              controller: _descriptionController,
+                              maxLines: 3,
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Enter description',
+                              ),
+                            )
+                          : CustomText(
+                              text: widget.article.description!,
+                              fontSize: 16,
+                            ),
                     ],
                   ),
                 ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               
               // Full Content
-              if (article.content != null)
+              if (widget.article.content != null)
                 Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade300),
                     borderRadius: BorderRadius.circular(12),
@@ -121,34 +187,56 @@ class ArticleDetailsScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CustomText(
+                      const CustomText(
                         text: 'Full Content',
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       CustomText(
-                        text: article.content!,
+                        text: widget.article.content!,
                         fontSize: 16,
                       ),
                     ],
                   ),
                 ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               
-              // Action Button
+              // Action Buttons
               Center(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    // Open article in browser
-                    // You can implement URL launcher here
-                  },
-                  icon: Icon(Icons.open_in_browser),
-                  label: Text('Open in Browser'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF1877f2),
-                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (_isEditMode) ...[
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _isEditMode = false;
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey,
+                        ),
+                        child: const Text('Cancel'),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: _saveChanges,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1877f2),
+                        ),
+                        child: const Text('Save'),
+                      ),
+                    ] else
+                      ElevatedButton.icon(
+                        onPressed: _toggleEditMode,
+                        icon: const Icon(Icons.edit),
+                        label: const Text('Edit Article'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1877f2),
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ],
@@ -167,8 +255,8 @@ class ArticleDetailsScreen extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: Color(0xFF1877f2), size: 20),
-        SizedBox(width: 12),
+        Icon(icon, color: const Color(0xFF1877f2), size: 20),
+        const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,7 +266,7 @@ class ArticleDetailsScreen extends StatelessWidget {
                 fontSize: 14,
                 color: Colors.grey[600],
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               CustomText(
                 text: value,
                 fontSize: 16,
@@ -203,5 +291,12 @@ class ArticleDetailsScreen extends StatelessWidget {
     } catch (e) {
       return dateString;
     }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 }
