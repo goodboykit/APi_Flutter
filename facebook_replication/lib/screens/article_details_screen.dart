@@ -20,6 +20,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
   late bool _isEditMode;
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
+  bool _isLoading = false;
   
   @override
   void initState() {
@@ -35,14 +36,26 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
     });
   }
 
-  void _saveChanges() {
-    // Handle save logic
+  Future<void> _saveChanges() async {
+    // Show loading for 6 seconds for screenshots
     setState(() {
+      _isLoading = true;
+    });
+
+    // Extended loading time for screenshot purposes
+    await Future.delayed(const Duration(seconds: 6));
+
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = false;
       _isEditMode = false;
     });
     
+    if (!mounted) return;
+    
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Changes saved!')),
+      const SnackBar(content: Text('Article updated successfully!')),
     );
   }
 
@@ -55,13 +68,15 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
         actions: [
           IconButton(
             icon: Icon(_isEditMode ? Icons.save : Icons.edit),
-            onPressed: _isEditMode ? _saveChanges : _toggleEditMode,
+            onPressed: _isLoading ? null : (_isEditMode ? _saveChanges : _toggleEditMode),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -209,7 +224,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
                   children: [
                     if (_isEditMode) ...[
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: _isLoading ? null : () {
                           setState(() {
                             _isEditMode = false;
                           });
@@ -221,15 +236,24 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
                       ),
                       const SizedBox(width: 16),
                       ElevatedButton(
-                        onPressed: _saveChanges,
+                        onPressed: _isLoading ? null : _saveChanges,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF1877f2),
                         ),
-                        child: const Text('Save'),
+                        child: _isLoading 
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text('Save'),
                       ),
                     ] else
                       ElevatedButton.icon(
-                        onPressed: _toggleEditMode,
+                        onPressed: _isLoading ? null : _toggleEditMode,
                         icon: const Icon(Icons.edit),
                         label: const Text('Edit Article'),
                         style: ElevatedButton.styleFrom(
@@ -240,8 +264,44 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
                 ),
               ),
             ],
+            ),
           ),
-        ),
+          ),
+          
+          // Loading overlay
+          if (_isLoading)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1877f2)),
+                      strokeWidth: 4,
+                    ),
+                    SizedBox(height: 24),
+                    Text(
+                      'Updating article...',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Please wait while we save your changes',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

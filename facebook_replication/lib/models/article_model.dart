@@ -8,6 +8,7 @@ class Article {
   final String? content;
   final String? author;
   final Map<String, dynamic>? source;
+  final bool isActive;
 
   Article({
     this.id,
@@ -19,6 +20,7 @@ class Article {
     this.content,
     this.author,
     this.source,
+    this.isActive = true, // Default to active
   });
 
   factory Article.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class Article {
       content: json['content'] as String?,
       author: json['author'] as String?,
       source: json['source'] as Map<String, dynamic>?,
+      isActive: json['isActive'] as bool? ?? true, // Default to active for API articles
     );
   }
 }
