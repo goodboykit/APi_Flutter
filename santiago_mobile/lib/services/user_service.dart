@@ -57,7 +57,8 @@ class UserService {
     );
     
     if (response.statusCode == 201) {
-      return jsonDecode(response.body);
+      data = jsonDecode(response.body);
+      return data;
     } else {
       throw Exception('Failed to register user');
     }

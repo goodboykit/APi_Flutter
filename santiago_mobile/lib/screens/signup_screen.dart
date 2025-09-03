@@ -11,7 +11,9 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> 
     with SingleTickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
+  final _formKey1 = GlobalKey<FormState>();
+  final _formKey2 = GlobalKey<FormState>();
+  final _formKey3 = GlobalKey<FormState>();
   final _pageController = PageController();
   final _controllers = {
     'firstName': TextEditingController(),
@@ -63,7 +65,13 @@ class _SignUpScreenState extends State<SignUpScreen>
   }
 
   Future<void> _handleSignUp() async {
-    if (_formKey.currentState!.validate()) {
+    // Validate all forms
+    bool isValid = true;
+    if (_formKey1.currentState != null && !_formKey1.currentState!.validate()) isValid = false;
+    if (_formKey2.currentState != null && !_formKey2.currentState!.validate()) isValid = false;
+    if (_formKey3.currentState != null && !_formKey3.currentState!.validate()) isValid = false;
+    
+    if (isValid) {
       if (_controllers['password']!.text != _controllers['confirmPassword']!.text) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -97,22 +105,44 @@ class _SignUpScreenState extends State<SignUpScreen>
           'type': _selectedType,
         };
         
-        await UserService.registerUser(userData);
+        final result = await UserService.registerUser(userData);
         
         if (!mounted) return;
         
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Account created successfully! Please login.'),
-            backgroundColor: FacebookColors.successColor,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+        // Save user data if token is returned
+        if (result['token'] != null) {
+          await UserService.saveUserData(result);
+          
+          if (!mounted) return;
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Account created successfully! Welcome!'),
+              backgroundColor: FacebookColors.successColor,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
-          ),
-        );
-        
-        Navigator.pushReplacementNamed(context, '/login');
+          );
+          
+          Navigator.pushReplacementNamed(context, '/home');
+        } else {
+          if (!mounted) return;
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Account created successfully! Please login.'),
+              backgroundColor: FacebookColors.successColor,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          );
+          
+          Navigator.pushReplacementNamed(context, '/login');
+        }
       } catch (e) {
         if (!mounted) return;
         
@@ -437,7 +467,7 @@ class _SignUpScreenState extends State<SignUpScreen>
     return SingleChildScrollView(
       padding: const EdgeInsets.all(30),
       child: Form(
-        key: _formKey,
+        key: _formKey1,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -450,7 +480,7 @@ class _SignUpScreenState extends State<SignUpScreen>
               ),
             ),
             const SizedBox(height: 8),
-            Text(
+            const Text(
               'Tell us about yourself',
               style: TextStyle(
                 fontSize: 16,
@@ -548,7 +578,9 @@ class _SignUpScreenState extends State<SignUpScreen>
   Widget _buildContactInfoPage() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(30),
-      child: Column(
+      child: Form(
+        key: _formKey2,
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
@@ -600,6 +632,7 @@ class _SignUpScreenState extends State<SignUpScreen>
             },
           ),
         ],
+        ),
       ),
     );
   }
@@ -607,7 +640,9 @@ class _SignUpScreenState extends State<SignUpScreen>
   Widget _buildAccountInfoPage() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(30),
-      child: Column(
+      child: Form(
+        key: _formKey3,
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
@@ -619,7 +654,7 @@ class _SignUpScreenState extends State<SignUpScreen>
             ),
           ),
           const SizedBox(height: 8),
-          Text(
+          const Text(
             'Create your login credentials',
             style: TextStyle(
               fontSize: 16,
@@ -687,6 +722,7 @@ class _SignUpScreenState extends State<SignUpScreen>
             },
           ),
         ],
+        ),
       ),
     );
   }

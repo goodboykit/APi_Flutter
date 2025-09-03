@@ -91,7 +91,7 @@ class ThemeProvider extends ChangeNotifier {
         headlineMedium: TextStyle(color: FacebookColors.textPrimaryLight, fontWeight: FontWeight.w600),
         headlineSmall: TextStyle(color: FacebookColors.textPrimaryLight, fontWeight: FontWeight.w500),
       ),
-      iconTheme: IconThemeData(
+      iconTheme: const IconThemeData(
         color: FacebookColors.textSecondaryLight,
       ),
     );
@@ -100,23 +100,23 @@ class ThemeProvider extends ChangeNotifier {
   ThemeData get darkTheme {
     return ThemeData(
       brightness: Brightness.dark,
-      primarySwatch: MaterialColor(0xFF1877f2, {
-        50: Color(0xFFE3F2FD),
-        100: Color(0xFFBBDEFB),
-        200: Color(0xFF90CAF9),
-        300: Color(0xFF64B5F6),
-        400: Color(0xFF42A5F5),
+      primarySwatch: const MaterialColor(0xFF1877f2, {
+        50:  Color(0xFFE3F2FD),
+        100:  Color(0xFFBBDEFB),
+        200:  Color(0xFF90CAF9),
+        300:  Color(0xFF64B5F6),
+        400:  Color(0xFF42A5F5),
         500: FacebookColors.primaryBlue,
         600: FacebookColors.darkBlue,
-        700: Color(0xFF1565C0),
-        800: Color(0xFF0D47A1),
-        900: Color(0xFF01579B),
+        700:  Color(0xFF1565C0),
+        800:  Color(0xFF0D47A1),
+        900:  Color(0xFF01579B),
       }),
       primaryColor: FacebookColors.primaryBlue,
       scaffoldBackgroundColor: FacebookColors.backgroundDark,
       cardColor: FacebookColors.cardDark,
       dividerColor: FacebookColors.dividerDark,
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: FacebookColors.surfaceDark,
         foregroundColor: FacebookColors.textPrimaryDark,
         elevation: 1,
@@ -158,18 +158,18 @@ class ThemeProvider extends ChangeNotifier {
         fillColor: FacebookColors.surfaceDark,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(25),
-          borderSide: BorderSide(color: FacebookColors.dividerDark),
+          borderSide: const BorderSide(color: FacebookColors.dividerDark),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(25),
-          borderSide: BorderSide(color: FacebookColors.dividerDark),
+          borderSide: const BorderSide(color: FacebookColors.dividerDark),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(25),
-          borderSide: BorderSide(color: FacebookColors.primaryBlue, width: 2),
+          borderSide: const BorderSide(color: FacebookColors.primaryBlue, width: 2),
         ),
       ),
-      textTheme: TextTheme(
+      textTheme: const TextTheme(
         bodyLarge: TextStyle(color: FacebookColors.textPrimaryDark),
         bodyMedium: TextStyle(color: FacebookColors.textSecondaryDark),
         bodySmall: TextStyle(color: FacebookColors.textTertiaryDark),
@@ -177,7 +177,7 @@ class ThemeProvider extends ChangeNotifier {
         headlineMedium: TextStyle(color: FacebookColors.textPrimaryDark, fontWeight: FontWeight.w600),
         headlineSmall: TextStyle(color: FacebookColors.textPrimaryDark, fontWeight: FontWeight.w500),
       ),
-      iconTheme: IconThemeData(
+      iconTheme: const IconThemeData(
         color: FacebookColors.textSecondaryDark,
       ),
     );

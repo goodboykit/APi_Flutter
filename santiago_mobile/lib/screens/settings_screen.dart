@@ -91,11 +91,11 @@ class SettingsScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: ListTile(
-                    leading: Icon(
+                    leading: const Icon(
                       Icons.info_outline,
                       color: FacebookColors.primaryBlue,
                     ),
-                    title: CustomText(
+                    title: const CustomText(
                       text: 'App Version',
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -119,11 +119,11 @@ class SettingsScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: ListTile(
-                    leading: Icon(
+                    leading: const Icon(
                       Icons.code,
                       color: FacebookColors.primaryBlue,
                     ),
-                    title: CustomText(
+                    title: const CustomText(
                       text: 'Developer',
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -163,7 +163,7 @@ class SettingsScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: ListTile(
-                    leading: Icon(
+                    leading: const Icon(
                       Icons.notifications_outlined,
                       color: FacebookColors.primaryBlue,
                     ),
@@ -200,7 +200,7 @@ class SettingsScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: ListTile(
-                    leading: Icon(
+                    leading: const Icon(
                       Icons.lock_outline,
                       color: FacebookColors.primaryBlue,
                     ),
