@@ -167,6 +167,12 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           IconButton(
+            icon: const Icon(Icons.person_outline, size: 28),
+            onPressed: () {
+              Navigator.pushNamed(context, '/profile');
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
               Navigator.push(

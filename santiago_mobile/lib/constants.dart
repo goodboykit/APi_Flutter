@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppConstants {
-  static const String baseUrl = 'http://localhost:8080';
+  static const String baseUrl = 'http://localhost:8000';
   static const Color primaryColor = Color(0xFF1877f2);
 }
 
