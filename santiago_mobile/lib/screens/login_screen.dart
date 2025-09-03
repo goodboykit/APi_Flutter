@@ -119,15 +119,15 @@ class _LoginScreenState extends State<LoginScreen>
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Container(
-            height: size.height - MediaQuery.of(context).padding.top,
-            child: Column(
-              children: [
-                // Header Section with Logo
-                Expanded(
-                  flex: keyboardVisible ? 1 : 2,
-                  child: Container(
+              height: size.height - MediaQuery.of(context).padding.top,
+              child: Column(
+                children: [
+                  // Header Section with Logo
+                  Expanded(
+                    flex: keyboardVisible ? 1 : 2,
+                    child: Container(
                     width: double.infinity,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       gradient: FacebookColors.primaryGradient,
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(50),
@@ -211,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen>
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 8),
-                            Text(
+                            const Text(
                               'Sign in to continue to your account',
                               style: TextStyle(
                                 fontSize: 16,
@@ -427,7 +427,7 @@ class _LoginScreenState extends State<LoginScreen>
                             const SizedBox(height: 20),
                             
                             // Divider
-                            Row(
+                            const Row(
                               children: [
                                 Expanded(
                                   child: Divider(
@@ -494,11 +494,12 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-        ),
-      ), // PopScope child closing
-    ); // PopScope closing parenthesis
+                ],
+              ), // Column closing
+            ), // Container closing
+          ), // SingleChildScrollView closing
+        ), // SafeArea closing
+      ), // Scaffold closing (PopScope child)
+    ); // PopScope closing
   }
 }
